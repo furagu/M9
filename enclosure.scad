@@ -115,7 +115,7 @@ module base(
 }
 
 module ratchet_stand(
-        screw_r = 0.75,
+        screw_r = 0.95,
 
         stand_h = 18,
         stand_r = 2,
@@ -139,7 +139,7 @@ module ratchet_stand(
 }
 
 module sensor_stand(
-        screw_r = 0.75,
+        screw_r = 0.95,
 
         bearing_r = 4,
         bearing_l = 3,
@@ -178,7 +178,7 @@ module sensor_stand(
             }
 
             translate([bearing_stand_r - bearing_bed_l - bearing_stopper_l, -bearing_stand_distance / 2, 0])
-            cube(size=[bearing_bed_l + bearing_stopper_l, bearing_stand_distance, bearing_z]);
+            cube(size=[bearing_bed_l + bearing_stopper_l, bearing_stand_distance, bearing_stand_h]);
 
             translate([bearing_stand_r - bearing_bed_l, -bearing_r, 0])
             cube(size=[bearing_l, bearing_r * 2, bearing_z - bearing_r / 2]);
@@ -225,7 +225,7 @@ module sensor_stand(
 }
 
 module tensioner_stand(
-        screw_r = 0.75,
+        screw_r = 0.95,
 
         bearing_r = 4,
         bearing_l = 3,
@@ -247,9 +247,9 @@ module tensioner_stand(
         adjuster_slider_h = 8.5,
         adjuster_slider_r = 0.75,
 
-        arm_stand_y = 10,
+        arm_stand_y = 9.7,
         arm_stand_h = 8,
-        arm_stand_x = 2.7,
+        arm_stand_x = 1.3,
         arm_stand_r = 3,
         arm_stand_l = 2,
         arm_l = 3,
