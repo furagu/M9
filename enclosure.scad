@@ -2,7 +2,8 @@ $fn=100;
 
 main(
     face_h = 5,
-    stand_spacing = 50
+    stand_spacing = 50,
+    ratchet_positions = [[45, -20], [45, 20]]
 );
 
 module main() {
@@ -17,6 +18,35 @@ module main() {
     translate([stand_spacing, 0, 0])
     rotate([0, 0, 180])
     sensor_stand();
+
+    for(pos = ratchet_positions) {
+        translate(pos)
+        ratchet_stand();
+    }
+}
+
+module ratchet_stand(
+        screw_r = 0.75,
+
+        stand_h = 18,
+        stand_r = 2,
+        stand_l = 4
+    ){
+    stand_x_positions = [stand_l / 2, -stand_l / 2];
+
+    difference() {
+        hull() {
+            for(x = stand_x_positions) {
+                translate([x, 0, 0])
+                cylinder(h=stand_h, r=stand_r);
+            }
+        }
+
+        for(x = stand_x_positions) {
+            translate([x, 0, -1])
+            cylinder(r=screw_r, h=stand_h + 2);
+        }
+    }
 }
 
 module sensor_stand(
