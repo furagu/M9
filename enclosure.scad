@@ -7,6 +7,9 @@ main(
 );
 
 module main() {
+    translate([-3, -27, 0])
+    mount();
+
     translate([25.7, 0, 0])
     rotate([180, 0, 0])
     face(
@@ -23,6 +26,36 @@ module main() {
         translate(pos)
         ratchet_stand();
     }
+}
+
+module mount(
+    screw_r = 1,
+
+    outer_t = 1,
+    inner_t = 2,
+
+    h = 3.5,
+    r = 2
+    ){
+
+    translate([r + outer_t, r + outer_t, 0])
+    rotate([0, 0, 180])
+    difference() {
+        cylinder(h=h + inner_t, r=r + inner_t);
+
+        translate([0, 0, -1])
+        cylinder(r=r, h=h + 1);
+
+        translate([0, 0, -1])
+        cylinder(r=screw_r, h=h + inner_t + 2);
+
+        translate([r + outer_t, -r - inner_t, -1])
+        cube(size=[r + outer_t, r * 2 + inner_t * 2, h + inner_t + 2]);
+
+        translate([-r - inner_t, r + outer_t, -1])
+        cube(size=[r * 2 + inner_t * 2, r + outer_t, h + inner_t + 2]);
+    }
+
 }
 
 module ratchet_stand(
