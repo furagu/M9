@@ -1,61 +1,117 @@
 $fn=100;
 
 main(
+    face_x = -2,
+    face_r = 24,
     face_h = 5,
-    stand_spacing = 50,
-    ratchet_positions = [[45, -20], [45, 20]]
+    face_t = 2,
+
+    base_h = 1.5,
+    stand_to_stand_x = 50,
+    ratchet_positions = [[45, -20], [45, 20]],
+    stands_x = -2.5,
+    base_l = 45,
+    base_w = 44
+
 );
 
 module main() {
-    translate([-3, -27, 0])
-    mount();
+    difference() {
+        union() {
+            base(
+                l = base_l,
+                w = base_w,
+                h = base_h
+            );
 
-    translate([25.7, 0, 0])
-    rotate([180, 0, 0])
-    face(
-        h = face_h
-    );
+            translate([face_x, 0, 0])
+            face(
+                h = face_h,
+                r = face_r,
+                base_h = base_h,
+                r_t = face_t
+            );
 
-    tensioner_stand();
+            translate([stands_x, 0, 0]) {
+                tensioner_stand();
 
-    translate([stand_spacing, 0, 0])
-    rotate([0, 0, 180])
-    sensor_stand();
+                translate([stand_to_stand_x, 0, 0])
+                rotate([0, 0, 180])
+                sensor_stand(
+                    base_h = 1.5
+                );
 
-    for(pos = ratchet_positions) {
-        translate(pos)
-        ratchet_stand();
+                for(pos = ratchet_positions) {
+                    translate(pos)
+                    ratchet_stand();
+                }
+            }
+        }
+
+        translate([face_r + face_x, 0, -1])
+        cylinder(r=face_r - face_t, h=50);
     }
 }
 
-module mount(
-    screw_r = 1,
+module base(
+        screw_r = 1,
 
-    outer_t = 1,
-    inner_t = 2,
+        outer_t = 1,
+        inner_t = 2,
 
-    h = 3.5,
-    r = 2
+        mount_hole_h = 3.5,
+        mount_hole_r = 2,
+
+        corner_r = 1.5,
     ){
+    mount_positions = [[[0, 0], 180], [[l, 0], -90], [[0, w], 90], [[l, w], 0]];
 
-    translate([r + outer_t, r + outer_t, 0])
-    rotate([0, 0, 180])
+    translate([0, -w / 2, 0])
     difference() {
-        cylinder(h=h + inner_t, r=r + inner_t);
+        union() {
+            for(pos_angle = mount_positions) {
+                translate(pos_angle[0])
+                rotate([0, 0, pos_angle[1]])
+                difference() {
+                    union() {
+                        difference() {
+                            cylinder(h=mount_hole_h + inner_t, r=mount_hole_r + inner_t);
 
-        translate([0, 0, -1])
-        cylinder(r=r, h=h + 1);
+                            translate([0, 0, -1])
+                            cube(size=[mount_hole_r + outer_t + 1, mount_hole_r + outer_t + 1, mount_hole_h + inner_t + 2]);
+                        }
 
-        translate([0, 0, -1])
-        cylinder(r=screw_r, h=h + inner_t + 2);
+                        translate([-corner_r, -corner_r, 0])
+                        linear_extrude(height=mount_hole_h + inner_t)
+                        offset(r=corner_r)
+                        square(size=[mount_hole_r + outer_t, mount_hole_r + outer_t]);
+                    }
 
-        translate([r + outer_t, -r - inner_t, -1])
-        cube(size=[r + outer_t, r * 2 + inner_t * 2, h + inner_t + 2]);
+                    translate([mount_hole_r + outer_t, -mount_hole_r - inner_t, -1])
+                    cube(size=[mount_hole_r + outer_t, mount_hole_r * 2 + inner_t * 2, mount_hole_h + inner_t + 2]);
 
-        translate([-r - inner_t, r + outer_t, -1])
-        cube(size=[r * 2 + inner_t * 2, r + outer_t, h + inner_t + 2]);
+                    translate([-mount_hole_r - inner_t, mount_hole_r + outer_t, -1])
+                    cube(size=[mount_hole_r * 2 + inner_t * 2, mount_hole_r + outer_t, mount_hole_h + inner_t + 2]);
+                }
+
+            }
+
+            translate([- outer_t, -outer_t, 0])
+            linear_extrude(height=h)
+            offset(r=mount_hole_r)
+            square(size=[l + outer_t * 2, w + outer_t * 2]);
+        }
+
+        for(pos_angle = mount_positions) {
+            translate(pos_angle[0])
+            translate([0, 0, -1])
+            union() {
+                cylinder(r=mount_hole_r, h=mount_hole_h + 1);
+
+                cylinder(r=screw_r, h=mount_hole_h + inner_t + 2);
+            }
+        }
     }
-
 }
 
 module ratchet_stand(
@@ -65,7 +121,7 @@ module ratchet_stand(
         stand_r = 2,
         stand_l = 4
     ){
-    stand_x_positions = [stand_l / 2, -stand_l / 2];
+    stand_x_positions = [-stand_l / 2];
 
     difference() {
         hull() {
@@ -129,6 +185,9 @@ module sensor_stand(
 
             translate([-sensor_stand_l - sensor_stand_bridge / 2, -sensor_stand_distance / 2, 0])
             cube([sensor_stand_bridge, sensor_stand_distance, sensor_stand_h / 2]);
+
+            translate([-sensor_stand_l, -bearing_stand_distance / 2, 0])
+            cube(size=[sensor_stand_l + bearing_stand_r, bearing_stand_distance, base_h]);
         }
 
         for (s = [1, -1]) {
@@ -154,7 +213,7 @@ module sensor_stand(
         cylinder(h=bearing_l * 2, r=bearing_r - bearing_stopper_w);
 
         for(y = stand_y_positions) {
-            translate([0, y, -1])
+            translate([0, y, 1])
             cylinder(r=screw_r, h=bearing_stand_h + 2);
         }
 
@@ -245,7 +304,7 @@ module tensioner_stand(
         }
 
         for(y = concat(stand_y_positions, [-bearing_stand_distance / 2 - adjuster_stand_w])) {
-            translate([0, y, -1])
+            translate([0, y, 1])
             cylinder(r=screw_r, h=adjuster_stand_h + 2);
         }
 
@@ -271,26 +330,28 @@ module tensioner_stand(
 }
 
 module face(
-        r = 24,
         h_t = 3,
-        r_t = 1,
+
         slot_l = 36.5,
         slot_w = 25,
         slot_r = 2,
+
         slot_chamfer = 0.7
     ){
+    translate([r, 0, base_h])
+    rotate([180, 0, 0])
     difference() {
-        cylinder(h=h, r=r);
+        cylinder(h=h + base_h, r=r);
 
         translate([0, 0, -1])
-        cylinder(h=h - h_t + 1, r=r - r_t);
+        cylinder(h=h + base_h - h_t + 1, r=r - r_t);
 
         translate([0, 0, -1])
-        linear_extrude(height=h + 2)
+        linear_extrude(height=h + base_h + 2)
         offset(r=slot_r)
         square([slot_l - slot_r * 2, slot_w - slot_r * 2], true);
 
-        translate([0, 0, h - slot_chamfer])
+        translate([0, 0, h + base_h - slot_chamfer])
         hull() {
             translate([0, 0, 2])
             linear_extrude(height=1)
@@ -303,7 +364,7 @@ module face(
         }
 
         intersection() {
-            translate([0, 0, h - h_t + slot_chamfer])
+            translate([0, 0, h + base_h - h_t + slot_chamfer])
             rotate([180, 0, 0])
             hull() {
                 translate([0, 0, 2])
@@ -316,7 +377,7 @@ module face(
                 square([slot_l - (slot_r) * 2, slot_w - (slot_r) * 2], true);
             }
 
-            cylinder(h=h - h_t + 1, r=r - r_t);
+            cylinder(h=h + base_h - h_t + 1, r=r - r_t);
         }
     }
 }
