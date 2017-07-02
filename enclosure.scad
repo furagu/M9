@@ -4,7 +4,7 @@ main(
     face_x = -2,
     face_r = 24,
     face_h = 5,
-    face_t = 2,
+    face_t = 1.5,
 
     base_h = 1.5,
     stand_to_stand_x = 50,
@@ -156,6 +156,7 @@ module sensor_stand(
         sensor_stand_l = 6,
         sensor_stand_r = 2,
         sensor_stand_h = 8,
+        sensor_stand_z = 2,
         sensor_stand_distance = 15,
         sensor_stand_bridge = 2
     ){
@@ -168,41 +169,24 @@ module sensor_stand(
                 translate([0, y, 0])
                 cylinder(h=bearing_stand_h, r=bearing_stand_r);
 
-                translate([-sensor_stand_l, y -sensor_stand_bridge / 2, 0])
-                cube([sensor_stand_l, sensor_stand_bridge, bearing_stand_h]);
+                translate([-sensor_stand_l, y -sensor_stand_bridge / 2, sensor_stand_z])
+                cube([sensor_stand_l, sensor_stand_bridge, bearing_stand_h - sensor_stand_z]);
             }
 
             for(y = sensor_stand_y_positions) {
-                translate([-sensor_stand_l, y, 0])
-                cylinder(h=sensor_stand_h, r=sensor_stand_r);
+                translate([-sensor_stand_l, y, sensor_stand_z])
+                cylinder(h=sensor_stand_h - sensor_stand_z, r=sensor_stand_r);
             }
 
             translate([bearing_stand_r - bearing_bed_l - bearing_stopper_l, -bearing_stand_distance / 2, 0])
             cube(size=[bearing_bed_l + bearing_stopper_l, bearing_stand_distance, bearing_stand_h]);
 
-            translate([bearing_stand_r - bearing_bed_l, -bearing_r, 0])
-            cube(size=[bearing_l, bearing_r * 2, bearing_z - bearing_r / 2]);
+            translate([bearing_stand_r - bearing_bed_l, -bearing_r - 1, 0])
+            cube(size=[bearing_l, bearing_r * 2 + 2, bearing_stand_h]);
 
-            translate([-sensor_stand_l - sensor_stand_bridge / 2, -sensor_stand_distance / 2, 0])
+            translate([-sensor_stand_l - sensor_stand_bridge / 2, -sensor_stand_distance / 2, sensor_stand_z])
             cube([sensor_stand_bridge, sensor_stand_distance, sensor_stand_h / 2]);
-
-            translate([-sensor_stand_l, -bearing_stand_distance / 2, 0])
-            cube(size=[sensor_stand_l + bearing_stand_r, bearing_stand_distance, base_h]);
         }
-
-        for (s = [1, -1]) {
-            translate([0, s * bearing_stand_distance / 2 - bearing_stand_r, bearing_stand_h])
-            cube(size=[bearing_stand_r * 2, bearing_stand_r * 2, bearing_z]);
-        }
-
-        translate([0, bearing_stand_distance / 2 - bearing_stand_r, bearing_stand_h])
-        rotate([45, 0, 0])
-        cube(size=[bearing_stand_r * 2, bearing_stand_r * 2, bearing_z]);
-
-        translate([0, -bearing_stand_distance / 2 + bearing_stand_r, bearing_stand_h])
-        rotate([-45, 0, 0])
-        translate([0, -bearing_stand_r * 2, 0])
-        cube(size=[bearing_stand_r * 2, bearing_stand_r * 2, bearing_z]);
 
         translate([bearing_stand_r - bearing_bed_l, 0, bearing_z])
         rotate([0, 90, 0])
@@ -213,7 +197,7 @@ module sensor_stand(
         cylinder(h=bearing_l * 2, r=bearing_r - bearing_stopper_w);
 
         for(y = stand_y_positions) {
-            translate([0, y, 1])
+            translate([0, y, 1.5])
             cylinder(r=screw_r, h=bearing_stand_h + 2);
         }
 
@@ -232,6 +216,7 @@ module tensioner_stand(
 
         bearing_stand_h = 8,
         bearing_stand_r = 2,
+        bearing_stand_w = 10,
         bearing_stand_distance = 14,
         bearing_stand_l = 2,
 
@@ -242,18 +227,18 @@ module tensioner_stand(
         adjuster_stand_h = 10,
         adjuster_stand_notch = 1.5,
 
-        adjuster_slider_w = 5,
+        adjuster_slider_w = 4.9,
         adjuster_slider_y = 6,
         adjuster_slider_h = 8.5,
         adjuster_slider_r = 0.75,
 
-        arm_stand_y = 9.7,
-        arm_stand_h = 8,
-        arm_stand_x = 1.3,
-        arm_stand_r = 3,
-        arm_stand_l = 2,
-        arm_l = 3,
-        arm_stand_pin_r = 0.75
+        crossbar_stand_y = 9.7,
+        crossbar_stand_h = 8,
+        crossbar_stand_x = 1.3,
+        crossbar_stand_r = 3,
+        crossbar_stand_l = 2,
+        crossbar_l = 3,
+        crossbar_stand_pin_r = 0.75
     ){
     stand_y_positions = [-bearing_stand_distance / 2, bearing_stand_distance / 2];
 
@@ -267,8 +252,8 @@ module tensioner_stand(
             translate([-bearing_stopper_l - bearing_stand_l / 2, -bearing_stand_distance / 2, 0])
             cube(size=[bearing_stand_l + bearing_stopper_l, bearing_stand_distance, bearing_stand_h]);
 
-            translate([-bearing_stand_l / 2, -bearing_r, 0])
-            cube(size=[bearing_l, bearing_r * 2, bearing_stand_h - bearing_r / 2]);
+            translate([-bearing_stand_l / 2, -bearing_stand_w / 2, 0])
+            cube(size=[bearing_l, bearing_stand_w, bearing_stand_h]);
 
             translate([-bearing_stand_r, -adjuster_stand_w - bearing_stand_distance / 2, 0])
             cube([bearing_stand_r * 2, adjuster_stand_w, adjuster_stand_h]);
@@ -276,30 +261,30 @@ module tensioner_stand(
             translate([0, -adjuster_stand_w - bearing_stand_distance / 2, 0])
             cylinder(r=bearing_stand_r, h=adjuster_stand_h);
 
-            translate([arm_stand_x, bearing_stand_distance / 2 + arm_stand_y - arm_stand_r, 0])
+            translate([crossbar_stand_x, bearing_stand_distance / 2 + crossbar_stand_y - crossbar_stand_r, 0])
             difference() {
                 union() {
-                    translate([0, arm_stand_r, arm_stand_h])
+                    translate([0, crossbar_stand_r, crossbar_stand_h])
                     rotate([0, 90, 0])
-                    cylinder(r=arm_stand_r, h=arm_stand_l * 2 + arm_l);
+                    cylinder(r=crossbar_stand_r, h=crossbar_stand_l * 2 + crossbar_l);
 
-                    cube([arm_stand_l * 2 + arm_l, arm_stand_r * 2, arm_stand_h]);
+                    cube([crossbar_stand_l * 2 + crossbar_l, crossbar_stand_r * 2, crossbar_stand_h]);
                 }
 
-                translate([arm_stand_l, -1, arm_stand_h - arm_stand_r])
-                cube([arm_l, arm_stand_r * 2 + 2, arm_stand_r * 2 + 1]);
+                translate([crossbar_stand_l, -1, crossbar_stand_h - crossbar_stand_r])
+                cube([crossbar_l, crossbar_stand_r * 2 + 2, crossbar_stand_r * 2 + 1]);
 
-                translate([-1, arm_stand_r, arm_stand_h])
+                translate([-1, crossbar_stand_r, crossbar_stand_h])
                 rotate([0, 90, 0])
-                cylinder(r=arm_stand_pin_r, h=arm_stand_l * 1.5 + arm_l + 1);
+                cylinder(r=crossbar_stand_pin_r, h=crossbar_stand_l * 1.5 + crossbar_l + 1);
             }
 
             translate([-bearing_stand_l / 2, bearing_stand_distance / 2, 0])
-            cube(size=[bearing_stand_l, arm_stand_y - arm_stand_r, arm_stand_h - arm_stand_r ]);
+            cube(size=[bearing_stand_l, crossbar_stand_y - crossbar_stand_r, crossbar_stand_h - crossbar_stand_r ]);
 
-            translate([-bearing_stand_l / 2, bearing_stand_distance / 2 + arm_stand_y - arm_stand_r, 0])
+            translate([-bearing_stand_l / 2, bearing_stand_distance / 2 + crossbar_stand_y - crossbar_stand_r, 0])
             rotate([0, 0, -45])
-            cube(size=[bearing_stand_l, arm_stand_y - arm_stand_r, arm_stand_h - arm_stand_r ]);
+            cube(size=[bearing_stand_l, crossbar_stand_y - crossbar_stand_r, crossbar_stand_h - crossbar_stand_r ]);
 
         }
 
