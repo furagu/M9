@@ -68,7 +68,10 @@ module base(
 
         left_arm_x = -3.94,
         left_arm_y = 4,
-        left_arm_w = 25
+        left_arm_w = 25,
+
+        central_pcb_cutoff_w = 0.5,
+        central_pcb_cutoff_x = -5
     ){
     stand_positions = [[0, 0], [l, 0], [0, w], [l, w]];
     ridge_h = mount_hole_h * 0.7 + h;
@@ -143,6 +146,19 @@ module base(
 
                 cylinder(r=screw_r, h=mount_hole_h + stand_t + 2);
             }
+        }
+
+        for(sy = [[1, 0 - mount_hole_r - stand_t], [-1, w + mount_hole_r + stand_t - central_pcb_cutoff_w]]) {
+            M = [
+              [ 1, sy[0] * 0.8, 0, 0 ],
+              [ 0, 1, 0, 0 ],
+              [ 0, 0, 1, 0 ],
+              [ 0, 0, 0, 1 ],
+            ];
+
+            translate([l + central_pcb_cutoff_x - central_pcb_cutoff_w, sy[1], -1])
+            multmatrix(M)
+            cube([10, central_pcb_cutoff_w, mount_hole_h + stand_t + 2]);
         }
     }
 }
