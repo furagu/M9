@@ -1,7 +1,7 @@
 $fn=100;
 
 main(
-    face_x = -2,
+    face_x = 22,
     face_r = 24,
     face_h = 5,
     face_t = 1,
@@ -18,7 +18,7 @@ main(
 
 module main() {
 
-    translate([face_r + face_x, 0, 0])
+    translate([face_x, 0, 0])
     rotate([180, 0, 0])
     face(
         h = face_h,
@@ -52,9 +52,7 @@ module base(
 
         stand_t = 1,
 
-        inner_t = 2,
-
-        mount_hole_h = 6.7,
+        mount_hole_h = 7.2,
         mount_hole_r = 2.25,
 
         arm_w = 5,
@@ -143,7 +141,7 @@ module base(
             union() {
                 cylinder(r=mount_hole_r, h=mount_hole_h + 1);
 
-                cylinder(r=screw_r, h=mount_hole_h + inner_t + 2);
+                cylinder(r=screw_r, h=mount_hole_h + stand_t + 2);
             }
         }
     }
@@ -273,18 +271,18 @@ module crossbar_stand(
 
         adjuster_slider_w = 4.9,
         adjuster_slider_y = 6,
-        adjuster_slider_h = 8,
+        adjuster_slider_h = 8.5,
         adjuster_slider_r = 0.75,
 
         crossbar_x = 2.8,
         crossbar_l = 3.1,
 
         crossbar_pin_z = 8,
-        crossbar_pin_y = 16.85,
+        crossbar_pin_y = 16.95,
         crossbar_pin_r = 0.72,
 
         crossbar_stand_h = 11,
-        crossbar_stand_w = 5.8,
+        crossbar_stand_w = 5.55,
         crossbar_stand_t = 2,
         crossbar_stand_link_a = -6.6613,
 
@@ -367,8 +365,8 @@ module face(
     difference() {
         cylinder(h=h, r=r);
 
-        // translate([0, 0, -1])
-        // cylinder(h=h - h_t + 1, r=r - r_t);
+        translate([0, 0, -1])
+        cylinder(h=h - h_t + 1, r=r - r_t);
 
         translate([0, 0, -1])
         linear_extrude(height=h + 2)
@@ -391,9 +389,9 @@ module face(
             translate([0, 0, h - h_t + slot_chamfer])
             rotate([180, 0, 0])
             hull() {
-                translate([0, 0, 3.9])
+                translate([0, 0, 2])
                 linear_extrude(height=1)
-                offset(r=slot_r + 3)
+                offset(r=slot_r + 2)
                 square([slot_l - (slot_r + 1) * 2 + 4, slot_w - (slot_r + 1) * 2 + 4], true);
 
                 linear_extrude(height=1)
