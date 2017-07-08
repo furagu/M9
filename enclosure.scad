@@ -13,26 +13,31 @@ main(
     stand_to_stand_x = 50,
     stands_x = -4.45,
     base_l = 45,
-    base_w = 44
+    base_w = 44,
+
+    stick_x = 2
 );
 
 module main() {
-
     translate([face_x, 0, 0])
     rotate([180, 0, 0])
     face(
         h = face_h,
         r = face_r,
-        r_t = face_t
+        r_t = face_t,
+        slot_offset_x = stick_x
     );
 
+    color("green")
     base(
         l = base_l,
         w = base_w,
-        h = base_h
+        h = base_h,
+        stands_offset = stick_x
     );
 
-    translate([stands_x, 0, 0]) {
+    color("red")
+    translate([stands_x + stick_x, 0, 0]) {
         crossbar_stand();
 
         translate([stand_to_stand_x, 0, 0])
@@ -50,66 +55,68 @@ module main() {
 module base(
         screw_r = 1.1,
 
-        stand_t = 1,
+        t = 1,
 
         mount_hole_h = 7.2,
         mount_hole_r = 2.25,
 
         arm_w = 5,
 
-        tensioner_link_w = 4.4,
-        tensioner_link_a = 51,
+        crossbar_support_l = 3.45,
+        crossbar_support_w = 5.77,
+
+        tensioner_link_w = 3,
 
         ratchet_support_l = 6.4,
         ratchet_support_w = 4.5,
 
         sensor_stand_link_w = 13,
-        sensor_stand_link_a = 2,
 
         left_arm_x = -3.94,
         left_arm_y = 4,
         left_arm_w = 25,
 
+        right_arm_x = 0.5,
+        right_arm_y = 14,
+        right_arm_w = 16,
+
         central_pcb_cutoff_w = 0.5,
         central_pcb_cutoff_x = -5
     ){
     stand_positions = [[0, 0], [l, 0], [0, w], [l, w]];
-    ridge_h = mount_hole_h * 0.7 + h;
+    ridge_h = 6.5;
 
     translate([0, -w / 2, 0])
     difference() {
         union() {
             for(p = stand_positions) {
                 translate(p)
-                cylinder(h=mount_hole_h + stand_t, r=mount_hole_r + stand_t);
+                cylinder(h=mount_hole_h + t, r=mount_hole_r + t);
             }
 
-            translate([-mount_hole_r - stand_t, w - mount_hole_r - stand_t, 0])
-            cube(size=[mount_hole_r * 2 + stand_t * 2, mount_hole_r + stand_t, mount_hole_h + stand_t]);
+            flex_bar(
+                l = arm_w,
+                w = w,
+                h = h,
 
-            translate([l - arm_w + mount_hole_r + stand_t, 0, 0])
-            cube(size=[arm_w, w, h]);
+                x = left_arm_x + stands_offset,
+                y1 = left_arm_y,
+                y2 = left_arm_y + left_arm_w
+            );
 
-            hull() {
-                translate([-mount_hole_r - stand_t + arm_w / 2, 0, 0])
-                cylinder(h=h, r=arm_w / 2);
+            translate([l, 0, 0])
+            flex_bar(
+                l = arm_w,
+                w = w,
+                h = h,
 
-                translate([left_arm_x, left_arm_y, 0])
-                cylinder(h=h, r=arm_w / 2);
-            }
+                x = right_arm_x + stands_offset,
+                y1 = right_arm_y,
+                y2 = right_arm_y + right_arm_w
+            );
 
-            translate([left_arm_x - arm_w / 2, left_arm_y, 0])
-            cube([arm_w, left_arm_w, h]);
 
-            hull() {
-                translate([left_arm_x, left_arm_y + left_arm_w, 0])
-                cylinder(h=h, r=arm_w / 2);
-
-                translate([-mount_hole_r - stand_t + arm_w / 2, w, 0])
-                cylinder(h=h, r=arm_w / 2);
-            }
-
-            for(y = [-mount_hole_r - stand_t, w - arm_w + mount_hole_r + stand_t]) {
+            for(y = [-mount_hole_r - t, w - arm_w + mount_hole_r + t]) {
                 translate([0, y, 0])
                 cube(size=[l, arm_w, h]);
             }
@@ -119,24 +126,42 @@ module base(
                 cube(size=[l, h, ridge_h]);
             }
 
-            rotate([0, 0, tensioner_link_a])
+            M = [
+              [ abs((-4 + stands_offset) / tensioner_link_w * 1.2), (-4 + stands_offset) / tensioner_link_w, 0, 0 ],
+              [ 0, 1, 0, 0 ],
+              [ 0, 0, 1, 0 ],
+              [ 0, 0, 0, 1 ],
+            ];
+            multmatrix(M)
             translate([-h / 2, 0, 0])
             cube(size=[h, tensioner_link_w, ridge_h]);
 
-            for(y = [0, w - ratchet_support_w])
-            translate([l - ratchet_support_l, y, 0])
-            cube(size=[ratchet_support_l, ratchet_support_w, h]);
+            translate([0, w - crossbar_support_w, 0])
+            cube(size=[crossbar_support_l + stands_offset, crossbar_support_w, h]);
 
-            for(pos = [[0, -sensor_stand_link_a], [w, 180 + sensor_stand_link_a]]) {
+            for(y = [0, w - ratchet_support_w]) {
+                translate([l - ratchet_support_l + stands_offset, y, 0])
+                cube(size=[ratchet_support_l, ratchet_support_w, h]);
+            }
+
+            for(pos = [[0, 1], [w, -1]]) {
+                M = [
+                  [ 1, (pos[1] * (0.5 + stands_offset) / sensor_stand_link_w), 0, 0 ],
+                  [ 0, 1, 0, 0 ],
+                  [ 0, 0, 1, 0 ],
+                  [ 0, 0, 0, 1 ],
+                ];
+
                 translate([l, pos[0], 0])
-                rotate([0, 0, pos[1]])
+                rotate([0, 0, 90 - 90 * pos[1]])
                 translate([-h / 2, 0, 0])
+                multmatrix(M)
                 cube(size=[h, sensor_stand_link_w, ridge_h]);
             }
         }
 
-        translate([-mount_hole_r - stand_t, w - mount_hole_r - stand_t - 2.3, h])
-        cube(size=[mount_hole_r * 2 + stand_t * 2, mount_hole_r + stand_t, mount_hole_h + stand_t]);
+        translate([-mount_hole_r - t, w - mount_hole_r - t - 2.3, h])
+        cube(size=[mount_hole_r * 2 + t * 2, mount_hole_r + t, mount_hole_h + t]);
 
         for(p = stand_positions) {
             translate(p)
@@ -144,11 +169,11 @@ module base(
             union() {
                 cylinder(r=mount_hole_r, h=mount_hole_h + 1);
 
-                cylinder(r=screw_r, h=mount_hole_h + stand_t + 2);
+                cylinder(r=screw_r, h=mount_hole_h + t + 2);
             }
         }
 
-        for(sy = [[1, 0 - mount_hole_r - stand_t], [-1, w + mount_hole_r + stand_t - central_pcb_cutoff_w]]) {
+        for(sy = [[1, 0 - mount_hole_r - t], [-1, w + mount_hole_r + t - central_pcb_cutoff_w]]) {
             M = [
               [ 1, sy[0] * 0.8, 0, 0 ],
               [ 0, 1, 0, 0 ],
@@ -158,8 +183,38 @@ module base(
 
             translate([l + central_pcb_cutoff_x - central_pcb_cutoff_w, sy[1], -1])
             multmatrix(M)
-            cube([10, central_pcb_cutoff_w, mount_hole_h + stand_t + 2]);
+            cube([10, central_pcb_cutoff_w, mount_hole_h + t + 2]);
         }
+    }
+}
+
+module flex_bar(
+        l = 10,
+        w = 50,
+        h = 1.5,
+
+        x  = 10,
+        y1 = 20,
+        y2 = 40
+    ) {
+    r = l / 2;
+
+    hull() {
+        cylinder(r=r, h=h);
+
+        translate([x, y1, 0])
+        cylinder(r=r, h=h);
+    }
+
+    translate([x - r, y1, 0])
+    cube([l, y2 - y1, h]);
+
+    hull() {
+        translate([0, w, 0])
+        cylinder(r=r, h=h);
+
+        translate([x, y2, 0])
+        cylinder(r=r, h=h);
     }
 }
 
@@ -384,28 +439,17 @@ module face(
         translate([0, 0, -1])
         cylinder(h=h - h_t + 1, r=r - r_t);
 
-        translate([0, 0, -1])
+        translate([slot_offset_x, 0, -1])
         linear_extrude(height=h + 2)
         offset(r=slot_r)
         square([slot_l - slot_r * 2, slot_w - slot_r * 2], true);
 
-        translate([0, 0, h - slot_chamfer])
-        hull() {
-            translate([0, 0, 2])
-            linear_extrude(height=1)
-            offset(r=slot_r + 1)
-            square([slot_l - (slot_r + 1) * 2 + 4, slot_w - (slot_r + 1) * 2 + 4], true);
-
-            linear_extrude(height=1)
-            offset(r=slot_r)
-            square([slot_l - (slot_r) * 2, slot_w - (slot_r) * 2], true);
-        }
-
+        translate([slot_offset_x, 0, 0])
         intersection() {
             translate([0, 0, h - h_t + slot_chamfer])
             rotate([180, 0, 0])
             hull() {
-                translate([0, 0, 2])
+                translate([0, 0, 3])
                 linear_extrude(height=1)
                 offset(r=slot_r + 2)
                 square([slot_l - (slot_r + 1) * 2 + 4, slot_w - (slot_r + 1) * 2 + 4], true);
