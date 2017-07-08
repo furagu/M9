@@ -6,8 +6,8 @@ main(
     face_h = 5,
     face_t = 1,
 
-    face_mount_y = 22,
-    face_mount_x = 10,
+    face_mount_x = 26,
+    face_mount_angle = 65,
 
     base_h = 1.5,
     stand_to_stand_x = 50,
@@ -25,18 +25,21 @@ module main() {
         h = face_h,
         r = face_r,
         r_t = face_t,
+        mount_x = face_mount_x,
+        mount_angle = face_mount_angle,
         slot_offset_x = stick_x
     );
 
-    color("green")
     base(
         l = base_l,
         w = base_w,
         h = base_h,
-        stands_offset = stick_x
+        stands_offset = stick_x,
+        face_x = face_x,
+        face_mount_x = face_mount_x,
+        face_mount_angle = face_mount_angle
     );
 
-    color("red")
     translate([stands_x + stick_x, 0, 0]) {
         crossbar_stand();
 
@@ -54,6 +57,8 @@ module main() {
 
 module base(
         screw_r = 1.1,
+        face_mount_screw_d = 1.9,
+        face_mount_stand_d = 5.2,
 
         t = 1,
 
@@ -115,7 +120,6 @@ module base(
                 y2 = right_arm_y + right_arm_w
             );
 
-
             for(y = [-mount_hole_r - t, w - arm_w + mount_hole_r + t]) {
                 translate([0, y, 0])
                 cube(size=[l, arm_w, h]);
@@ -158,6 +162,20 @@ module base(
                 multmatrix(M)
                 cube(size=[h, sensor_stand_link_w, ridge_h]);
             }
+
+            translate([face_x, w / 2, 0])
+            for(a = [face_mount_angle, 180 - face_mount_angle, 180 + face_mount_angle, 360 - face_mount_angle]) {
+                rotate([0, 0, a])
+                translate([face_mount_x, 0, 0])
+                cylinder(d=face_mount_stand_d, h=ridge_h);
+            }
+        }
+
+        translate([face_x, w / 2, 0])
+        for(a = [face_mount_angle, 180 - face_mount_angle, 180 + face_mount_angle, 360 - face_mount_angle]) {
+            rotate([0, 0, a])
+            translate([face_mount_x, 0, -1])
+            cylinder(d=face_mount_screw_d, h=ridge_h + 2);
         }
 
         translate([-mount_hole_r - t, w - mount_hole_r - t - 2.3, h])
@@ -168,7 +186,6 @@ module base(
             translate([0, 0, -1])
             union() {
                 cylinder(r=mount_hole_r, h=mount_hole_h + 1);
-
                 cylinder(r=screw_r, h=mount_hole_h + t + 2);
             }
         }
@@ -425,16 +442,30 @@ module crossbar_stand(
 }
 
 module face(
-        h_t = 3,
+    h_t = 3,
 
-        slot_l = 37,
-        slot_w = 25,
-        slot_r = 2,
+    slot_l = 37,
+    slot_w = 25,
+    slot_r = 2,
 
-        slot_chamfer = 0.7
-    ){
+    slot_chamfer = 0.7,
+    slot_reinforcement_t = 3.5
+){
     difference() {
-        cylinder(h=h, r=r);
+        union() {
+            cylinder(h=h, r=r);
+
+            translate([slot_offset_x, 0, 0])
+            linear_extrude(height=h)
+            offset(r=slot_reinforcement_t)
+            square([slot_l, slot_w], true);
+
+            for(a = [mount_angle, 180 - mount_angle, 180 + mount_angle, 360 - mount_angle]) {
+                rotate([0, 0, a])
+                translate([mount_x, 0, 0])
+                face_mount(h=h);
+            }
+        }
 
         translate([0, 0, -1])
         cylinder(h=h - h_t + 1, r=r - r_t);
@@ -462,5 +493,43 @@ module face(
             translate([0, 0, -1])
             cylinder(h=h - h_t + 2, r=r - r_t);
         }
+    }
+}
+
+module face_mount(
+        h = 10,
+        t = 1.5,
+
+        screw_d = 2.2,
+
+        screw_head_d = 3.8,
+        screw_head_h = 1,
+
+        screw_distance = 1
+    ){
+    l = screw_head_d * 2;
+    d = screw_d + t * 2;
+
+    translate([-l, 0, 0])
+    difference() {
+        union() {
+            translate([l, 0, 0])
+            cylinder(d=d, h=h);
+
+            translate([0, -d / 2, 0])
+            cube([l, d, h]);
+        }
+
+        translate([l, 0, -1])
+        cylinder(d=screw_d, h=h + 2);
+
+        translate([l, 0, screw_distance])
+        cylinder(d1=screw_d, d2=screw_head_d, h=screw_head_h);
+
+        translate([l, 0, screw_distance + screw_head_h])
+        cylinder(d=screw_head_d, h=h);
+
+        translate([-d, -d - 1, -1])
+        cube(size=[d, d * 2 + 2, h + 2]);
     }
 }
