@@ -2,12 +2,12 @@ $fn=100;
 
 main(
     face_x = 22,
-    face_r = 24,
+    face_d = 48,
     face_h = 5,
     face_t = 1,
 
     face_mount_x = 26,
-    face_mount_angle = 65,
+    face_mount_angle = 68,
 
     base_h = 1.5,
     stand_to_stand_x = 50,
@@ -15,7 +15,7 @@ main(
     base_l = 45,
     base_w = 44,
 
-    stick_x = 2
+    stick_x = 1.9
 );
 
 module main() {
@@ -23,8 +23,8 @@ module main() {
     rotate([180, 0, 0])
     face(
         h = face_h,
-        r = face_r,
-        r_t = face_t,
+        d = face_d,
+        t = face_t,
         mount_x = face_mount_x,
         mount_angle = face_mount_angle,
         slot_offset_x = stick_x
@@ -442,62 +442,61 @@ module crossbar_stand(
 }
 
 module face(
-    h_t = 3,
+    plate_t = 3,
 
-    slot_l = 37,
+    slot_l = 36.5,
     slot_w = 25,
     slot_r = 2,
 
-    slot_chamfer = 0.7,
-    slot_reinforcement_t = 3.5
+    slot_bevel = 1,
+    slot_clearance = 3
 ){
     difference() {
         union() {
-            cylinder(h=h, r=r);
+            cylinder(h=h, d=d);
 
-            translate([slot_offset_x, 0, 0])
-            linear_extrude(height=h)
-            offset(r=slot_reinforcement_t)
-            square([slot_l, slot_w], true);
+            slot(h=h, extra=slot_clearance + t);
 
             for(a = [mount_angle, 180 - mount_angle, 180 + mount_angle, 360 - mount_angle]) {
                 rotate([0, 0, a])
                 translate([mount_x, 0, 0])
-                face_mount(h=h);
+                mount();
             }
+
+            // color("red")
+            // for(a = [45 : 90 : 360]) {
+            //     rotate([0, 0, a])
+            //     translate([r, -0.5, 0])
+            //     cube([3, 1, 3]);
+            // }
         }
 
-        translate([0, 0, -1])
-        cylinder(h=h - h_t + 1, r=r - r_t);
+        translate([0, 0, -1]) {
+            cylinder(h=h - plate_t + 1, d=d - t * 2);
+            slot(h=h + 2);
+            slot(h=h - plate_t + 1, extra=slot_clearance);
+        }
 
-        translate([slot_offset_x, 0, -1])
-        linear_extrude(height=h + 2)
-        offset(r=slot_r)
-        square([slot_l - slot_r * 2, slot_w - slot_r * 2], true);
+        translate([0, 0, h - plate_t])
+        hull() {
+            translate([0, 0, -slot_bevel])
+            slot(h=1, extra=slot_bevel);
 
-        translate([slot_offset_x, 0, 0])
-        intersection() {
-            translate([0, 0, h - h_t + slot_chamfer])
-            rotate([180, 0, 0])
-            hull() {
-                translate([0, 0, 3])
-                linear_extrude(height=1)
-                offset(r=slot_r + 2)
-                square([slot_l - (slot_r + 1) * 2 + 4, slot_w - (slot_r + 1) * 2 + 4], true);
-
-                linear_extrude(height=1)
-                offset(r=slot_r)
-                square([slot_l - (slot_r) * 2, slot_w - (slot_r) * 2], true);
-            }
-
-            translate([0, 0, -1])
-            cylinder(h=h - h_t + 2, r=r - r_t);
+            slot(h=slot_bevel);
         }
     }
-}
 
-module face_mount(
-        h = 10,
+    module slot(
+        extra = 0,
+        h = 1
+    ){
+        translate([slot_offset_x, 0, 0])
+        linear_extrude(height=h)
+        offset(r=slot_r + extra)
+        square([slot_l - slot_r * 2, slot_w - slot_r * 2], true);
+    }
+
+    module mount(
         t = 1.5,
 
         screw_d = 2.2,
@@ -507,29 +506,30 @@ module face_mount(
 
         screw_distance = 1
     ){
-    l = screw_head_d * 2;
-    d = screw_d + t * 2;
+        l = screw_head_d * 2;
+        d = screw_d + t * 2;
 
-    translate([-l, 0, 0])
-    difference() {
-        union() {
-            translate([l, 0, 0])
-            cylinder(d=d, h=h);
+        translate([-l, 0, 0])
+        difference() {
+            union() {
+                translate([l, 0, 0])
+                cylinder(d=d, h=h);
 
-            translate([0, -d / 2, 0])
-            cube([l, d, h]);
+                translate([0, -d / 2, 0])
+                cube([l, d, h]);
+            }
+
+            translate([l, 0, -1])
+            cylinder(d=screw_d, h=h + 2);
+
+            translate([l, 0, screw_distance])
+            cylinder(d1=screw_d, d2=screw_head_d, h=screw_head_h);
+
+            translate([l, 0, screw_distance + screw_head_h])
+            cylinder(d=screw_head_d, h=h);
+
+            translate([-d, -d - 1, -1])
+            cube(size=[d, d * 2 + 2, h + 2]);
         }
-
-        translate([l, 0, -1])
-        cylinder(d=screw_d, h=h + 2);
-
-        translate([l, 0, screw_distance])
-        cylinder(d1=screw_d, d2=screw_head_d, h=screw_head_h);
-
-        translate([l, 0, screw_distance + screw_head_h])
-        cylinder(d=screw_head_d, h=h);
-
-        translate([-d, -d - 1, -1])
-        cube(size=[d, d * 2 + 2, h + 2]);
     }
 }
