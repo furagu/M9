@@ -58,10 +58,10 @@ module main() {
         sensor_stand();
 
         translate([45, 20])
-        ratchet_stand();
+        ratchet_stand(h=16.5);
 
         translate([45, -20])
-        ratchet_stand(h=14);
+        ratchet_stand(h=12.5);
     }
 }
 
@@ -69,7 +69,6 @@ module base(
     mount_screw_d = 2.2,
     face_mount_screw_d = 1.9,
     face_mount_stand_d = 5.2,
-
     t = 1,
 
     mount_hole_h = 7.2,
@@ -98,10 +97,17 @@ module base(
     central_pcb_cutoff_w = 0.5,
     central_pcb_cutoff_x = -5,
 
+    tensioner_cutout_h = 0.6,
+    tensioner_cutout_d = 2.2,
+
+    wire_cutout_d = 6,
+    wire_cutout_offset = 2.4,
+
     screw_d = 1.9
 ){
     stand_positions = [[0, 0], [l, 0], [0, w], [l, w]];
-    ridge_h = 6.5;
+    y_ridge_h = 5;
+    x_ridge_h = 6.5;
 
     translate([0, -w / 2, 0])
     difference() {
@@ -139,7 +145,7 @@ module base(
 
             for(y = [0, l - h / 2]) {
                 translate([0, y - h / 2, 0])
-                cube(size=[l, h, ridge_h]);
+                cube(size=[l, h, x_ridge_h]);
             }
 
             M = [
@@ -150,7 +156,7 @@ module base(
             ];
             multmatrix(M)
             translate([-h / 2, 0, 0])
-            cube(size=[h, tensioner_link_w, ridge_h]);
+            cube(size=[h, tensioner_link_w, y_ridge_h]);
 
             translate([0, w - crossbar_support_w, 0])
             cube(size=[crossbar_support_l + stands_offset, crossbar_support_w, h]);
@@ -172,22 +178,29 @@ module base(
                 rotate([0, 0, 90 - 90 * pos[1]])
                 translate([-h / 2, 0, 0])
                 multmatrix(M)
-                cube(size=[h, sensor_stand_link_w, ridge_h]);
+                cube(size=[h, sensor_stand_link_w, y_ridge_h]);
             }
 
             translate([face_x, w / 2, 0])
             for(a = [face_mount_angle, 180 - face_mount_angle, 180 + face_mount_angle, 360 - face_mount_angle]) {
                 rotate([0, 0, a])
                 translate([face_mount_r, 0, 0])
-                cylinder(d=face_mount_stand_d, h=ridge_h);
+                cylinder(d=face_mount_stand_d, h=x_ridge_h);
             }
         }
+
+        translate([stands_offset - 7.45, 5.5, tensioner_cutout_h]) {
+            cube([5, 7, 2]);
+        }
+
+        translate([stands_offset - 4.45, 9, -1])
+        cylinder(h=h + 2, d=tensioner_cutout_d);
 
         translate([face_x, w / 2, 0])
         for(a = [face_mount_angle, 180 - face_mount_angle, 180 + face_mount_angle, 360 - face_mount_angle]) {
             rotate([0, 0, a])
             translate([face_mount_r, 0, -1])
-            cylinder(d=face_mount_screw_d, h=ridge_h + 2);
+            cylinder(d=face_mount_screw_d, h=x_ridge_h + 2);
         }
 
         translate([-mount_hole_r - t, w - mount_hole_r - t - 2.3, h])
@@ -205,7 +218,7 @@ module base(
         for(p = screw_positions) {
             translate(p)
             translate([stands_offset, 0, -1])
-            cylinder(h=ridge_h + 2);
+            cylinder(h=y_ridge_h + 2);
         }
 
         for(sy = [[1, 0 - mount_hole_r - t], [-1, w + mount_hole_r + t - central_pcb_cutoff_w]]) {
@@ -220,6 +233,15 @@ module base(
             multmatrix(M)
             cube([10, central_pcb_cutoff_w, mount_hole_h + t + 2]);
         }
+
+        translate([l + wire_cutout_offset, w + wire_cutout_offset, 0])
+        rotate([0, 90, -45])
+        cylinder(d=wire_cutout_d, h=10, center=true);
+
+        translate([l + wire_cutout_offset, -wire_cutout_offset, 0])
+        rotate([0, 90, 45])
+        cylinder(d=wire_cutout_d, h=10, center=true);
+
     }
 }
 
@@ -282,9 +304,9 @@ module sensor_stand(
 
         bearing_r = 4,
         bearing_l = 2.5,
-        bearing_z = 8,
+        bearing_z = 6.5,
 
-        bearing_stand_h = 6.5,
+        bearing_stand_h = 5,
         bearing_stand_r = 2,
         bearing_stand_distance = 16,
 
@@ -294,7 +316,7 @@ module sensor_stand(
 
         sensor_stand_l = 6,
         sensor_stand_r = 2,
-        sensor_stand_h = 7.8,
+        sensor_stand_h = 6.3,
         sensor_stand_z = 4,
         sensor_stand_distance = 15,
         sensor_stand_bridge = 4
@@ -360,10 +382,9 @@ module crossbar_stand(
         screw_d = 1.9,
 
         bearing_x = -1,
-        bearing_z = 8,
+        bearing_z = 6.5,
         bearing_r = 4,
 
-        bearing_stand_h = 8,
         bearing_stand_r = 2,
         bearing_stand_w = 10,
         bearing_stand_distance = 14,
@@ -372,7 +393,7 @@ module crossbar_stand(
         bearing_stopper_h = 0.9,
 
         adjuster_stand_w = 11,
-        adjuster_stand_h = 10,
+        adjuster_stand_h = 8.5,
         adjuster_stand_notch = 1.6,
 
         adjuster_slider_w = 4.9,
@@ -383,11 +404,11 @@ module crossbar_stand(
         crossbar_x = 2.8,
         crossbar_l = 3.1,
 
-        crossbar_pin_z = 8,
+        crossbar_pin_z = 6.5,
         crossbar_pin_y = 16.95,
         crossbar_pin_r = 0.72,
 
-        crossbar_stand_h = 11,
+        crossbar_stand_h = 9.5,
         crossbar_stand_w = 5.55,
         crossbar_stand_t = 2,
         crossbar_stand_link_a = -6.6613,
@@ -460,7 +481,7 @@ module crossbar_stand(
 }
 
 module face(
-    plate_t = 3,
+    plate_t = 1.5,
 
     slot_l = 36.5,
     slot_w = 25,
@@ -522,7 +543,7 @@ module face(
         screw_head_d = 3.8,
         screw_head_h = 1,
 
-        screw_distance = 1
+        screw_distance = 2
     ){
         l = screw_head_d * 2;
         d = screw_d + t * 2;
