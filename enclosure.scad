@@ -173,11 +173,11 @@ module enclosure() {
             [0, base_w, 3.5],
             [face_x - face_screw_dx, base_w / 2 + face_screw_dy, 3.5],
             [face_x + face_screw_dx, base_w / 2 + face_screw_dy, 3.5],
-            [base_l, base_w],
+            [base_l, base_w, 5],
             [stand_to_stand_x + stands_x + stick_x, 30],
             [stand_to_stand_x + stands_x + stick_x - 1.8, 28],
             [stand_to_stand_x + stands_x + stick_x - 1.8, 16],
-            [stand_to_stand_x + stands_x + stick_x, 14],
+            [stand_to_stand_x + stands_x + stick_x, 14, 5],
             [base_l, 0, 3.5],
             [face_x + face_screw_dx, base_w / 2 - face_screw_dy, 3.5],
             [face_x - face_screw_dx, base_w / 2 - face_screw_dy, 3.5],
@@ -185,7 +185,7 @@ module enclosure() {
         ]);
 
         translate([0, 0, 5])
-        beam(w=4.8, h=5, points=[
+        beam(w=4.5, h=5, points=[
             [stand_to_stand_x + stands_x + stick_x, 30],
             [stand_to_stand_x + stands_x + stick_x, 14],
         ]);
