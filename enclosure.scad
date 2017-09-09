@@ -251,8 +251,8 @@ module beam(w, h, points) {
 module face(
     plate_t = 1.5,
 
-    slot_l = 37,
-    slot_w = 25,
+    slot_l = 36.8,
+    slot_w = 24.8,
     slot_r = 2,
 
     slot_bevel = 1,
