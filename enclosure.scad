@@ -30,6 +30,8 @@ module main() {
         slot_offset_x = stick_x
     );
 
+    translate([0, -base_w / 2, 0])
+    difference() {
         enclosure();
 
         gimbal_screws();
