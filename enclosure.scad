@@ -172,8 +172,8 @@ module enclosure() {
             [31.7, base_w + top_beam_dy],
             [base_l, base_w],
             [stand_to_stand_x + stands_x + stick_x, 30],
-            [stand_to_stand_x + stands_x + stick_x - 1.5, 28],
-            [stand_to_stand_x + stands_x + stick_x - 1.5, 16],
+            [stand_to_stand_x + stands_x + stick_x - 1.8, 28],
+            [stand_to_stand_x + stands_x + stick_x - 1.8, 16],
             [stand_to_stand_x + stands_x + stick_x, 14],
             [base_l, 0],
             [31.7, -top_beam_dy],
@@ -182,7 +182,7 @@ module enclosure() {
         ]);
 
         translate([0, 0, 5])
-        beam(w=4.2, h=5, points=[
+        beam(w=4.8, h=5, points=[
             [stand_to_stand_x + stands_x + stick_x, 30],
             [stand_to_stand_x + stands_x + stick_x, 14],
         ]);
