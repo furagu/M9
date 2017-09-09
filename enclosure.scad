@@ -72,12 +72,13 @@ module crossbar() {
 
 module crossbar_tension_screw() {
     l = 6;
-    w = 4.9;
+    w = 5.1;
     h = 12;
+    y = 9;
     guide_d = 1.5;
     screw_d = 2.3;
 
-    translate([stands_x + stick_x, 6.55, 1]) {
+    translate([stands_x + stick_x, y - w / 2, 1]) {
         translate([-l / 2, 0])
         cube([l, w, h]);
 
