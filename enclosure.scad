@@ -275,7 +275,7 @@ module face(
             // color("red")
             // for(a = [45 : 90 : 360]) {
             //     rotate([0, 0, a])
-            //     translate([r, -0.5, 0])
+            //     translate([d / 2, -0.5, 0])
             //     cube([3, 1, 3]);
             // }
         }
