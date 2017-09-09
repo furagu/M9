@@ -43,9 +43,9 @@ module main() {
 }
 
 module crossbar() {
-    mount_l = 3.2;
-    mount_d = 5.1;
-    pin_d = 1.59;
+    mount_l = 3.4;
+    mount_d = 6;
+    pin_d = 1.62;
     pin_l = 7;
     s = 15;
 
