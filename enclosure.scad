@@ -195,7 +195,7 @@ module enclosure() {
             [stands_x + stick_x, 13.4],
         ]);
 
-        translate([stands_x + stick_x - 2, 13.4, 6.5])
+        translate([stands_x + stick_x - 2, 13.3, 6.5])
         cube(size=[6, 6, 3]);
     }
 
