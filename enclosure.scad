@@ -293,6 +293,18 @@ module face(
 
             slot(h=slot_bevel);
         }
+
+        translate([11, 0, -1])
+        for (a = [70, -70]) {
+            rotate([0, 90, a])
+            cylinder(d=6, h=d / 2 + plate_t);
+        }
+
+        for (y = [8, -8]) {
+            translate([0, y])
+            rotate([0, 90, 0])
+            cylinder(d=3, h=d / 2 + plate_t);
+        }
     }
 
     module slot(
