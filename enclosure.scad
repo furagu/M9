@@ -30,8 +30,6 @@ module main() {
         slot_offset_x = stick_x
     );
 
-    translate([0, -base_w / 2, 0])
-    difference() {
         enclosure();
 
         gimbal_screws();
@@ -49,7 +47,7 @@ module crossbar() {
     pin_l = 7;
     s = 15;
 
-    translate([stands_x + stick_x + 2.81, 38.98, 6.5]) {
+    translate([stands_x + stick_x + 2.81, 38.98, 6.6]) {
         rotate([0, -90, 0])
         translate([0, 0, -1])
         hull() {
