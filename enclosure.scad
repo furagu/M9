@@ -77,7 +77,7 @@ module crossbar_tension_screw() {
     w = 4.9;
     h = 12;
     guide_d = 1.5;
-    screw_d = 2.1;
+    screw_d = 2.3;
 
     translate([stands_x + stick_x, 6.55, 1]) {
         translate([-l / 2, 0])
