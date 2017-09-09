@@ -162,22 +162,25 @@ module enclosure() {
     right_beam_dx = 0.5;
     top_beam_dy = 2.1;
 
+    face_screw_dx = face_mount_r * cos(face_mount_angle);
+    face_screw_dy = face_mount_r * sin(face_mount_angle);
+
     difference() {
         beam(w=4, h=6.5, points=[
             [0, 0],
             [stands_x + stick_x, 4],
             [stands_x + stick_x, 29],
-            [0, base_w],
-            [12.26, base_w + top_beam_dy],
-            [31.7, base_w + top_beam_dy],
+            [0, base_w, 3.5],
+            [face_x - face_screw_dx, base_w / 2 + face_screw_dy, 3.5],
+            [face_x + face_screw_dx, base_w / 2 + face_screw_dy, 3.5],
             [base_l, base_w],
             [stand_to_stand_x + stands_x + stick_x, 30],
             [stand_to_stand_x + stands_x + stick_x - 1.8, 28],
             [stand_to_stand_x + stands_x + stick_x - 1.8, 16],
             [stand_to_stand_x + stands_x + stick_x, 14],
-            [base_l, 0],
-            [31.7, -top_beam_dy],
-            [12.26, -top_beam_dy],
+            [base_l, 0, 3.5],
+            [face_x + face_screw_dx, base_w / 2 - face_screw_dy, 3.5],
+            [face_x - face_screw_dx, base_w / 2 - face_screw_dy, 3.5],
             [0, 0],
         ]);
 
@@ -241,8 +244,8 @@ module beam(w, h, points) {
     for (i = [0:len(points) - 2]) {
         hull()
         for (p = [points[i], points[i + 1]]) {
-            translate(p)
-            cylinder(d=w, h=h);
+            translate([p[0], p[1]])
+            cylinder(d=w, h=len(points[i]) > 2 ? points[i][2] : h);
         }
     }
 }
