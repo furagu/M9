@@ -258,7 +258,7 @@ module face(
     slot_r = 2,
 
     slot_bevel = 1,
-    slot_clearance = 3.5
+    slot_clearance = 3
 ){
     difference() {
         union() {
@@ -306,11 +306,11 @@ module face(
     }
 
     module mount(
-        t = 2,
+        t = 1.5,
 
-        screw_d = 2.2,
+        screw_d = 2.4,
 
-        screw_head_d = 3.8,
+        screw_head_d = 4,
         screw_head_h = 1,
 
         screw_distance = 2
