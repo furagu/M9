@@ -150,7 +150,7 @@ module mount_screws() {
     for (p = [[0, 0], [0, base_w], [base_l, base_w], [base_l, 0]]) {
         translate([0, 0, -1])
         translate(p) {
-            // translate([0, 0, mount_hole_h + 1.3])
+            translate([0, 0, mount_hole_h + 1.2])
             cylinder(d=mount_screw_d, h=mount_screw_h + 1);
 
             cylinder(d=mount_hole_d, h=mount_hole_h + 1);
