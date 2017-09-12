@@ -3,7 +3,7 @@ $fn=200;
 face_x = 22;
 face_d = 48;
 face_h = 5;
-face_t = 1;
+face_t = 1.5;
 
 face_mount_r = 26;
 face_mount_angle = 68;
@@ -259,7 +259,7 @@ module face(
     slot_r = 2,
 
     slot_bevel = 1,
-    slot_clearance = 3
+    slot_clearance = 2.5
 ){
     difference() {
         union() {
@@ -288,9 +288,9 @@ module face(
             slot(h=slot_bevel);
         }
 
-        for (y = [17.5 - 3, -17.5]) {
-            translate([14.5, y, - plate_t])
-            cube([4, 3, h]);
+        for (y = [17.5 - 4, -17.5]) {
+            translate([13, y, - plate_t])
+            cube([7.5, 4, h]);
         }
     }
 
