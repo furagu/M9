@@ -43,13 +43,13 @@ module main() {
 }
 
 module crossbar() {
-    mount_l = 3.4;
+    mount_l = 3.3;
     mount_d = 6;
     pin_d = 1.62;
     pin_l = 7;
     s = 15;
 
-    translate([stands_x + stick_x + 2.81, 38.98, 6.6]) {
+    translate([stands_x + stick_x + 2.81, 39, 6.8]) {
         rotate([0, -90, 0])
         translate([0, 0, -1])
         hull() {
