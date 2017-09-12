@@ -272,13 +272,6 @@ module face(
                 translate([mount_r, 0, 0])
                 mount();
             }
-
-            // color("red")
-            // for(a = [45 : 90 : 360]) {
-            //     rotate([0, 0, a])
-            //     translate([d / 2, -0.5, 0])
-            //     cube([3, 1, 3]);
-            // }
         }
 
         translate([0, 0, -1]) {
@@ -300,6 +293,13 @@ module face(
             cube([4, 3, h]);
         }
     }
+
+    // color("red")
+    // for(a = [45 : 90 : 360]) {
+    //     rotate([0, 0, a])
+    //     translate([d / 2, -0.5, 0])
+    //     cube([3, 1, 3]);
+    // }
 
     module slot(
         extra = 0,
