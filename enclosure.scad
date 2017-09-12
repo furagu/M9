@@ -314,7 +314,7 @@ module face(
     module mount(
         t = 1.5,
 
-        screw_d = 2.4,
+        screw_d = 2.6,
 
         screw_head_d = 4,
         screw_head_h = 1,
