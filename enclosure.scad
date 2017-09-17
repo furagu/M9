@@ -1,4 +1,13 @@
-$fn=200;
+$fa = 5;
+$fs = 0.4;
+
+function D(d) =
+    let(segment = d * tan($fa / 2))
+    $fn > 0
+    ? d / cos(180 / $fn)
+    : segment > $fs
+        ? d / cos($fa / 2)
+        : sqrt(pow($fs / 2, 2) + pow(d / 2, 2)) * 2;
 
 face_x = 22;
 face_d = 48;
