@@ -14,7 +14,7 @@ face_d = 48;
 face_h = 5;
 face_t = 1.5;
 
-face_mount_r = 26;
+face_mount_r = 26.2;
 face_mount_angle = 68;
 
 stand_to_stand_x = 50;
@@ -321,11 +321,11 @@ module face(
     }
 
     module mount(
-        t = 1.5,
+        t = 1.8,
 
         screw_d = 2.6,
 
-        screw_head_d = 4,
+        screw_head_d = 4.2,
         screw_head_h = 1,
 
         screw_distance = 2
