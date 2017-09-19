@@ -131,8 +131,8 @@ module gimbal_screws() {
         [dx, 15],
         [dx, 29],
 
-        [stand_to_stand_x + dx - 7, base_w - 2],
-        [stand_to_stand_x + dx - 7, 2],
+        [stand_to_stand_x + dx - 6.5, base_w - 2],
+        [stand_to_stand_x + dx - 6.5, 2],
 
         [stand_to_stand_x + dx, 30],
         [stand_to_stand_x + dx, 14],
@@ -231,22 +231,22 @@ module enclosure() {
         translate([base_l, base_w])
         cylinder(d=6.5, h=8.5);
 
-        translate([43 + stands_x + stick_x, base_w - 2])
+        translate([43.5 + stands_x + stick_x, base_w - 2])
         cylinder(d=5, h=8.5);
     }
 
-    translate([43 + stands_x + stick_x, base_w - 2])
+    translate([43.5 + stands_x + stick_x, base_w - 2])
     cylinder(d=5, h=16.5);
 
     hull() {
         translate([base_l, 0])
         cylinder(d=6.5, h=8.5);
 
-        translate([43 + stands_x + stick_x, 2])
+        translate([43.5 + stands_x + stick_x, 2])
         cylinder(d=5, h=8.5);
     }
 
-    translate([43 + stands_x + stick_x, 2])
+    translate([43.5 + stands_x + stick_x, 2])
     cylinder(d=5, h=12.5);
 }
 
