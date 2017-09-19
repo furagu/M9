@@ -268,7 +268,7 @@ module face(
     slot_r = 2,
 
     slot_bevel = 1,
-    slot_clearance = 2.5
+    slot_clearance = 2
 ){
     difference() {
         union() {
