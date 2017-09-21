@@ -1,5 +1,5 @@
 $fa = 5;
-$fs = 0.4;
+$fs = 0.3;
 
 function D(d) =
     let(segment = d * tan($fa / 2))
@@ -14,7 +14,7 @@ face_d = 48;
 face_h = 5;
 face_t = 1.5;
 
-face_mount_r = 26.2;
+face_mount_r = 26.3;
 face_mount_angle = 68;
 
 stand_to_stand_x = 50;
@@ -24,11 +24,13 @@ base_w = 44;
 
 stick_x = 1.9;
 
+chamfer = 0.3;
+
 main();
 
 module main() {
-    translate([face_x, 0, 0])
-    // translate([base_l * 2, 0, face_h])
+    // translate([face_x, 0, 0])
+    translate([76, 0, face_h])
     rotate([180, 0, 0])
     face(
         d = face_d,
@@ -120,6 +122,7 @@ module bearings() {
 module gimbal_screws() {
     d = 1.9;
     h = 20;
+    dh = 1;
 
     dx = stands_x + stick_x;
 
@@ -127,26 +130,37 @@ module gimbal_screws() {
     face_screw_dy = face_mount_r * sin(face_mount_angle);
 
     positions = [
-        [dx, 4],
-        [dx, 15],
-        [dx, 29],
+        [dx, 4, dh],
+        [dx, 15, dh],
+        [dx, 29, dh],
 
-        [stand_to_stand_x + dx - 6.5, base_w - 2],
-        [stand_to_stand_x + dx - 6.5, 2],
+        [stand_to_stand_x + dx - 6.5, base_w - 2, dh],
+        [stand_to_stand_x + dx - 6.5, 2, dh],
 
-        [stand_to_stand_x + dx, 30],
-        [stand_to_stand_x + dx, 14],
+        [stand_to_stand_x + dx, 30, -1],
+        [stand_to_stand_x + dx, 14, -1],
 
-        [face_x + face_screw_dx, base_w / 2 + face_screw_dy],
-        [face_x - face_screw_dx, base_w / 2 + face_screw_dy],
-        [face_x + face_screw_dx, base_w / 2 - face_screw_dy],
-        [face_x - face_screw_dx, base_w / 2 - face_screw_dy],
+        [face_x + face_screw_dx, base_w / 2 + face_screw_dy, -1],
+        [face_x - face_screw_dx, base_w / 2 + face_screw_dy, -1],
+        [face_x + face_screw_dx, base_w / 2 - face_screw_dy, -1],
+        [face_x - face_screw_dx, base_w / 2 - face_screw_dy, -1],
     ];
 
     for (p = positions) {
         translate(p)
-        translate([0, 0, -2])
         cylinder(d=d, h=h);
+    }
+
+    chamfered_positions = [
+        [face_x + face_screw_dx, base_w / 2 + face_screw_dy, -1],
+        [face_x - face_screw_dx, base_w / 2 + face_screw_dy, -1],
+        [face_x + face_screw_dx, base_w / 2 - face_screw_dy, -1],
+        [face_x - face_screw_dx, base_w / 2 - face_screw_dy, -1],
+    ];
+
+    for (p = chamfered_positions) {
+        translate(p)
+        cylinder(d1=d + chamfer * 2 + 2, d2=d, h=chamfer + 1);
     }
 }
 
@@ -164,6 +178,8 @@ module mount_screws() {
             cylinder(d=mount_screw_d, h=mount_screw_h + 1);
 
             cylinder(d=mount_hole_d, h=mount_hole_h + 1);
+
+            cylinder(d1=mount_hole_d + chamfer * 2 + 2, d2 = mount_hole_d, h=chamfer + 1);
         }
     }
 }
@@ -283,6 +299,7 @@ module face(
             }
         }
 
+
         translate([0, 0, -1]) {
             cylinder(h=h - plate_t + 1, d=d - t * 2);
             slot(h=h + 2);
@@ -351,6 +368,9 @@ module face(
 
             translate([l, 0, screw_distance + screw_head_h])
             cylinder(d=screw_head_d, h=h);
+
+            translate([l, 0, h - chamfer])
+            cylinder(d1=screw_head_d, d2=screw_head_d + chamfer * 2 + 2 , h=chamfer + 1);
 
             translate([-d, -d - 1, -1])
             cube(size=[d, d * 2 + 2, h + 2]);
